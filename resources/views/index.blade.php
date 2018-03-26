@@ -23,7 +23,7 @@
       <div class="row">
         <div class="col-md-4" style="border-style: solid; border-width: 0px 1px 0px 0px;">
           <div class="row align-items-center">
-            <img src="{{asset(gambar/planefly.png)}}" height="42" width="42">
+            <img src="{{asset('gambar/planefly.png')}}" height="42" width="42">
             <div class="col">
               <p>From:</p>
               <select id="from">
@@ -35,11 +35,11 @@
           </div>
           <div class="row align-items-center justify-content-center">
             <div class="col-md-8">
-              <img src="{{asset(gambar/swap.png)}}" height="42" width="42" id="swap">
+              <img src="{{asset('gambar/swap.png')}}" height="42" width="42" id="swap">
             </div>
           </div>
           <div class="row align-items-center">
-            <img src="{{asset(gambar/planeland.png)}}" height="42" width="42">
+            <img src="{{asset('gambar/planeland.png')}}" height="42" width="42">
             <div class="col">
               <p>To:</p>
               <select id="to">
@@ -52,7 +52,7 @@
         </div>
         <div class="col-md-4" style="border-style: solid; border-width: 0px 1px 0px 0px;">
           <div class="row align-items-center">
-            <img src="{{asset(gambar/calendar.png)}}" height="30" width="30">
+            <img src="{{asset('gambar/calendar.png')}}" height="30" width="30">
             <div class="col">
               <p>Departure:</p>
               <input type="date" class="form-control" id="dateFlight">
@@ -126,27 +126,13 @@
     var banyakOrangSelect = document.getElementById("banyakOrang");
     var banyakOrang = banyakOrangSelect.options[banyakOrangSelect.selectedIndex].value;
 
-    var hasil;
+    var url = "{{URL::to('/findticket')}}";
+    url += "/" + from;
+    url += "/" + to;
+    url += "/" + dateFlight;
+    url += "/" + banyakOrang;
 
-    $.ajax({
-      type: "get",
-      url: "/findticket",
-      data: {
-        from : from,
-        to : to,
-        dateFlight : dateFlight,
-        banyakOrang : banyakOrang
-        , _token: '{{csrf_token()}}'
-      }
-      ,
-      dataType: 'json',
-      complete: function(result){
-        // alert(result.responseText);
-        // $("html").html(result.responseText);
-        // console.log(result.responseText);
-        window.open(result.responseText);
-      }
-    });
+    window.open(url);
   });
 </script>
 @endsection('content')

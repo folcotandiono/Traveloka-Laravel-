@@ -96,7 +96,7 @@
   <script type="text/javascript" src="{{asset('js/helper.js')}}"></script>
   <script type="text/javascript" src="{{asset('js/tagsinput.js')}}"></script>
   <script type="text/javascript">
-  var awal, tujuan, banyakHari, banyakPenumpang, tanggalPenerbangan;
+  var awal, tujuan, banyakPenumpang, tanggalPenerbangan;
 
   var hargaTermurah = 1000000000, hargaTermahal = -1000000000;
 
@@ -115,6 +115,13 @@
     }
   }
 
+  function prebooking(noPenerbangan) {
+    var url = "{{URL::to('/prebooking')}}";
+    url += "/" + noPenerbangan;
+    url += "/" + banyakPenumpang;
+    window.open(url);
+  }
+
   function tampilkan(dataPenerbangan) {
 
     $("#tabelPenerbangan tbody").empty();
@@ -125,9 +132,8 @@
       var namaMaskapai = dataPenerbangan[i]["Nama_Maskapai"];
       var jamBerangkat = dataPenerbangan[i]["Jam_Berangkat"];
       var jamTiba = dataPenerbangan[i]["Jam_Tiba"];
-      var lamaPenerbangan = jamTiba - jamBerangkat;
       var hargaPerOrang = dataPenerbangan[i]["Harga_Per_Orang"];
-
+      var noPenerbangan = dataPenerbangan[i]["No_Penerbangan"];
       var gambarPesawat;
 
       if (namaMaskapai == "Citilink") gambarPesawat = "<img src='{{asset('gambar/citilink.png')}}' height='100' width='150'></img>";
@@ -136,29 +142,7 @@
       else if (namaMaskapai == "Air Asia") gambarPesawat = "<img src='{{asset('gambar/airasia.jpg')}}' height='100' width='150'></img>";
       else if (namaMaskapai == "Garuda Indonesia") gambarPesawat = "<img src='{{asset('gambar/garuda.jpg')}}' height='100' width='150'></img>";
 
-      var buttonChoose = "<button type='button' class='btn btn-warning'>Choose</button>";
-      document.addEventListener("click", function() {
-        // $.ajax({
-        //   type: "POST",
-        //   url: "findticket.php",
-        //   data: {
-        //     awal: awal,
-        //     tujuan: tujuan,
-        //     banyakHari: banyakHari,
-        //     banyakPenumpang: banyakPenumpang,
-        //     namaMaskapai: namaMaskapai,
-        //     jamBerangkat: jamBerangkat,
-        //     jamTiba: jamTiba,
-        //     lamaPenerbangan: lamaPenerbangan,
-        //     hargaPerOrang: hargaPerOrang
-        //   },
-        //   dataType: 'json',
-        //   async: false,
-        //   success: function(result){
-
-        //   }
-        // });
-      });
+      var buttonChoose = "<button type='button' class='btn btn-warning' onclick="+"prebooking('"+noPenerbangan+"')>Choose</button>";
 
       temp += "<tr><td>" + 
       gambarPesawat + 
@@ -202,82 +186,79 @@ function filterDataPenerbangan() {
 
     var pricePerPerson =  $('#filterPricePerPerson').slider("option", "values");
 
-    var sql = "SELECT * FROM Jadwal WHERE Kota_Asal="+awal+" and Kota_Tujuan=" + tujuan+" and Tanggal="+tanggalPenerbangan;
+//     var sql = "SELECT * FROM Jadwal WHERE Kota_Asal="+"'"+awal+"'"+" and Kota_Tujuan=" + "'" + tujuan+ "'" +" and Tanggal="+"'"+tanggalPenerbangan+"'";
 
-if (airline.length > 0) {
-	sql += " and Nama_Maskapai in ("+ "'" + airline.join("','") + "'" +")";
+// if (airline.length > 0) {
+// 	sql += " and Nama_Maskapai in ("+ "'" + airline.join("','") + "'" +")";
 
-}
+// }
 
-if (depart.length > 0) {
-	for (var i = 0; i < depart.length; i++) {
-		if (i == 0) {
-			sql += " and (Jam_Berangkat between 'depart[i][0]' and 'depart[i][1]'";
-		}
-		else {
-			sql += " or Jam_Berangkat between 'depart[i][0]' and 'depart[i][1]'";
-		}
+// if (depart.length > 0) {
+// 	for (var i = 0; i < depart.length; i++) {
+// 		if (i == 0) {
+// 			sql += " and (Jam_Berangkat between '" + depart[i][0] + "' and '" + depart[i][1] + "'";
+// 		}
+// 		else {
+// 			sql += " or Jam_Berangkat between '" + depart[i][0] + "' and '" + depart[i][1] + "'";
+// 		}
 
-	}
-	sql += ")";
-}
+// 	}
+// 	sql += ")";
+// }
 
-if (arrive.length > 0) {
-	for (var i = 0; i < arrive.length; i++) {
-		if (i == 0) {
-			sql += " and (Jam_Tiba between 'arrive[i][0]' and 'arrive[i][1]'";
-		}
-		else {
-			sql += " or Jam_Tiba between 'arrive[i][0]' and 'arrive[i][1]'";
-		}
+// if (arrive.length > 0) {
+// 	for (var i = 0; i < arrive.length; i++) {
+// 		if (i == 0) {
+// 			sql += " and (Jam_Tiba between '" + arrive[i][0] + "' and '" + arrive[i][1] + "'";
+// 		}
+// 		else {
+// 			sql += " or Jam_Tiba between '" + arrive[i][0] + "' and '" + arrive[i][1] + "'";
+// 		}
 
-	}
-	sql += ")";
+// 	}
+// 	sql += ")";
 
-}
+// }
 
-if (duration.length > 0) {
-	sql += " and (Lama_Penerbangan between " + duration[0] * 60 + " and " + duration[1] * 60 + ")";
+// if (duration.length > 0) {
+// 	sql += " and (TIMESTAMPDIFF(MINUTE, Jam_Berangkat, Jam_Tiba) between " + duration[0] * 60 + " and " + duration[1] * 60 + ")";
 
-}
+// }
 
-if (pricePerPerson.length > 0) {
-	sql += " and (Harga_Per_Orang between " + pricePerPerson[0] + " and " + pricePerPerson[1] + ")";
+// if (pricePerPerson.length > 0) {
+// 	sql += " and (Harga_Per_Orang between " + pricePerPerson[0] + " and " + pricePerPerson[1] + ")";
 	
-}
+// }
 
-    console.log(sql);
-
-    // console.log(duration);
-
-    // $.ajax({
-    //   type: "POST",
-    //   url: "filter.php",
-    //   data: {
-    //     awal: awal,
-    //     tujuan: tujuan,
-    //     tanggalPenerbangan: tanggalPenerbangan,
-    //     banyakPenumpang: banyakPenumpang,
-    //     airline: JSON.stringify(airline),
-    //     depart: JSON.stringify(depart),
-    //     arrive: JSON.stringify(arrive),
-    //     duration: JSON.stringify(duration),
-    //     pricePerPerson: JSON.stringify(pricePerPerson)
-    //   },
-    //   dataType: 'json',
-    //   success: function(result){
-    //     console.log(result);
-    //     tampilkan(result);
-    //   },
-    //   error: function(result) {
-    //     console.log(result);
-    //   }
-    // });
+    $.ajax({
+      type: "GET",
+      url: "/findticket/filterJadwal",
+      data: {
+        awal: awal,
+        tujuan: tujuan,
+        tanggalPenerbangan: tanggalPenerbangan,
+        banyakPenumpang: banyakPenumpang,
+        airline: JSON.stringify(airline),
+        depart: JSON.stringify(depart),
+        arrive: JSON.stringify(arrive),
+        duration: JSON.stringify(duration),
+        pricePerPerson: JSON.stringify(pricePerPerson)
+        , _token: '{{csrf_token()}}'
+      },
+      dataType: 'json',
+      complete: function(result){
+        var hasil = JSON.parse(result.responseText);
+        console.log(hasil);
+        tampilkan(hasil);
+      }
+    });
 }
 
 $(document).ready(function() {
-
+  awal = '{{ $from }}', tujuan = '{{ $to }}', banyakPenumpang = '{{ $banyakOrang }}', tanggalPenerbangan = '{{ $dateFlight }}';
   var dataPenerbangan = {!! $dataPenerbangan !!};
+
+  console.log(dataPenerbangan);
 
   tampilkan(dataPenerbangan);
   cekHargaTermurahDanTermahal(dataPenerbangan);
