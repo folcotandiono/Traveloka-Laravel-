@@ -12,6 +12,8 @@
 */
 
 Route::get('/', 'UserController@index');
-Route::get('/findticket/{from}/{to}/{dateFlight}/{banyakOrang}', 'UserController@showFindTicket');
+Route::get('/findticket', 'UserController@showFindTicket');
 Route::get('/findticket/filterJadwal', 'UserController@filterJadwal');
-Route::get('/prebooking/{noPenerbangan}/{banyakPenumpang}', 'UserController@prebooking');
+Route::get('/prebooking', 'UserController@prebooking');
+Route::get('/booking', 'UserController@booking');
+Route::post('/payment', 'UserController@payment');

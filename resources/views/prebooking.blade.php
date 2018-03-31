@@ -1,26 +1,29 @@
 @extends('master')
 
 @section('content')
+<form action="/booking" method="get">
+    <input type="text" name="noPenerbangan" value="{{ $dataPenerbangan[0] -> No_Penerbangan }}" style="display: none">
+    <input type="text" name="banyakPenumpang" value="{{ $banyakPenumpang }}" style="display: none">
     <div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">
-                        Flight from {{ $dataPenerbangan[0] -> Kota_Asal }} to {{ $dataPenerbangan[0] -> Kota_Tujuan }}
-                    </h4>
-                </div>
-                <div class="card-body">
-                    <p id="dateFlight">
-                        {{ $dataPenerbangan[0] -> Tanggal }}
-                    </p>
-                    <p>
-                        {{ $banyakPenumpang }} orang
-                    </p>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">
+                            Flight from {{ $dataPenerbangan[0] -> Kota_Asal }} to {{ $dataPenerbangan[0] -> Kota_Tujuan }}
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <p id="dateFlight">
+                            {{ $dataPenerbangan[0] -> Tanggal }}
+                        </p>
+                        <p>
+                            {{ $banyakPenumpang }} orang
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
         <!-- <div class="col-md-12"> -->
             <div class="row">
                 <div class="col-md-8">
@@ -40,8 +43,8 @@
                                 </h4>
                                 <div class="row align-items-center">
                                     <img src="" alt="" height="100" width="100" id="gambarMaskapai">
-                                    <p id="namaMaskapai"></p>
-                                    <p id="noPenerbangan" style="margin-left:8px"></p>
+                                    <p>{{ $dataPenerbangan[0] -> Nama_Maskapai }} </p>
+                                    <p style="margin-left:8px"> {{ $dataPenerbangan[0] -> No_Penerbangan }}</p>
                                 </div>
                                 <div class="row">
                                     
@@ -78,11 +81,12 @@
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-warning btn-lg btn-block">Continue to Booking</button>
+                    <input type="submit" class="btn btn-warning btn-lg btn-block" value="Continue to Booking">
                 </div>
             </div>
         <!-- </div> -->
     </div>
+</form>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -103,8 +107,6 @@
             else if (namaMaskapai == "Air Asia") {
                 $('#gambarMaskapai').attr("src","{{asset('gambar/airasia.jpg')}}");
             }
-            $('#namaMaskapai').text(namaMaskapai);
-            $('#noPenerbangan').text('{{ $dataPenerbangan[0] -> No_Penerbangan }}');
 
             var jamBerangkat = '{{ $dataPenerbangan[0] -> Jam_Berangkat }}';
             $('#jamBerangkat').text(formathhmmss(jamBerangkat));
@@ -114,7 +116,7 @@
 
             $('#lamaPenerbangan').text(getLamaPenerbangan(jamBerangkat, jamTiba));
 
-            var hargaTiket = {{ $banyakPenumpang }} * {{ $dataPenerbangan[0] -> Harga_Per_Orang }};
+            var hargaTiket = '{{ $banyakPenumpang }}' * '{{ $dataPenerbangan[0] -> Harga_Per_Orang }}';
             $('#hargaTiket').text(hargaTiket);
             $('#hargaTotal').text(hargaTiket);
         });

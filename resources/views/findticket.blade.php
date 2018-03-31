@@ -24,11 +24,33 @@
       </div>
     </div>
     <div class="col-md-12" id="filterAirline" >
-      <input type="checkbox" id="filterAirlineCitilink" class="filter" value="Airline : Citilink"><img src='{{asset('gambar/citilink.png')}}' height='100' width='150'></img>Citilink<br>
-      <input type="checkbox" id="filterAirlineLionAir" class="filter" value="Airline : Lion Air"><img src='{{asset('gambar/lionair.png')}}' height='100' width='150'></img>Lion Air<br>
-      <input type="checkbox" id="filterAirlineAdamAir" class="filter" value="Airline : Adam Air"><img src='{{asset('gambar/adamair.png')}}' height='100' width='150'></img>Adam Air<br>
-      <input type="checkbox" id="filterAirlineAirAsia" class="filter" value="Airline : Air Asia"><img src='{{asset('gambar/airasia.jpg')}}' height='100' width='150'></img>Air Asia<br>
-      <input type="checkbox" id="filterAirlineGaruda" class="filter" value="Airline : Garuda"><img src='{{asset('gambar/garuda.jpg')}}' height='100' width='150'></img>Garuda
+      <div class="row align-items-center">
+        <div class="card">
+          <div class="card-body">
+            <input type="checkbox" id="filterAirlineCitilink" class="filter" value="Airline : Citilink"><img src='{{asset('gambar/citilink.png')}}' height='100' width='150'></img>Citilink<br>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <input type="checkbox" id="filterAirlineLionAir" class="filter" value="Airline : Lion Air"><img src='{{asset('gambar/lionair.png')}}' height='100' width='150'></img>Lion Air<br>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <input type="checkbox" id="filterAirlineAdamAir" class="filter" value="Airline : Adam Air"><img src='{{asset('gambar/adamair.png')}}' height='100' width='150'></img>Adam Air<br>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <input type="checkbox" id="filterAirlineAirAsia" class="filter" value="Airline : Air Asia"><img src='{{asset('gambar/airasia.jpg')}}' height='100' width='150'></img>Air Asia<br>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <input type="checkbox" id="filterAirlineGaruda" class="filter" value="Airline : Garuda"><img src='{{asset('gambar/garuda.jpg')}}' height='100' width='150'></img>Garuda
+          </div>
+        </div>
+      </div>
     </div>
     <div class="col-md-12" id="filterTime" >
       <div class="row">
@@ -48,13 +70,13 @@
         </div>
       </div>
     </div>
-    <div class="col-md-12">
+    <div class="col-md-12" id="filterDurationContainer">
       <p>Duration</p>
       <div class="col-md-4">
         <div id="filterDuration" class="filterSlider"></div>
       </div>
     </div>
-    <div class="col-md-12">
+    <div class="col-md-12" id="filterPricePerPersonContainer">
       <p>Price Per Person</p>
       <div class="col-md-4">
         <div id="filterPricePerPerson" class="filterSlider"></div>
@@ -141,8 +163,9 @@
       else if (namaMaskapai == "Adam Air") gambarPesawat = "<img src='{{asset('gambar/adamair.png')}}' height='100' width='150'></img>";
       else if (namaMaskapai == "Air Asia") gambarPesawat = "<img src='{{asset('gambar/airasia.jpg')}}' height='100' width='150'></img>";
       else if (namaMaskapai == "Garuda Indonesia") gambarPesawat = "<img src='{{asset('gambar/garuda.jpg')}}' height='100' width='150'></img>";
-
-      var buttonChoose = "<button type='button' class='btn btn-warning' onclick="+"prebooking('"+noPenerbangan+"')>Choose</button>";
+      
+      var form = "<form action='/prebooking' method='get'><input type='submit' class='btn btn-warning' value='Choose'><input name='noPenerbangan' value='" + noPenerbangan + "' style='display:none'><input name='banyakPenumpang' value='" + banyakPenumpang + "' style='display:none'></form>";
+      // var buttonChoose = "<button type='button' class='btn btn-warning' onclick="+"prebooking('"+noPenerbangan+"')>Choose</button>";
 
       temp += "<tr><td>" + 
       gambarPesawat + 
@@ -150,7 +173,7 @@
       formathhmmss(jamBerangkat) + "</td><td>" + 
       formathhmmss(jamTiba) + "</td><td>" + 
       getLamaPenerbangan(jamBerangkat, jamTiba) + "</td><td>" + 
-      formatKeRupiah(hargaPerOrang) + "<br>"+ buttonChoose + "</td></tr>"; 
+      formatKeRupiah(hargaPerOrang) + "<br>"+ form + "</td></tr>"; 
       // console.log(temp);
     }
 
@@ -186,50 +209,6 @@ function filterDataPenerbangan() {
 
     var pricePerPerson =  $('#filterPricePerPerson').slider("option", "values");
 
-//     var sql = "SELECT * FROM Jadwal WHERE Kota_Asal="+"'"+awal+"'"+" and Kota_Tujuan=" + "'" + tujuan+ "'" +" and Tanggal="+"'"+tanggalPenerbangan+"'";
-
-// if (airline.length > 0) {
-// 	sql += " and Nama_Maskapai in ("+ "'" + airline.join("','") + "'" +")";
-
-// }
-
-// if (depart.length > 0) {
-// 	for (var i = 0; i < depart.length; i++) {
-// 		if (i == 0) {
-// 			sql += " and (Jam_Berangkat between '" + depart[i][0] + "' and '" + depart[i][1] + "'";
-// 		}
-// 		else {
-// 			sql += " or Jam_Berangkat between '" + depart[i][0] + "' and '" + depart[i][1] + "'";
-// 		}
-
-// 	}
-// 	sql += ")";
-// }
-
-// if (arrive.length > 0) {
-// 	for (var i = 0; i < arrive.length; i++) {
-// 		if (i == 0) {
-// 			sql += " and (Jam_Tiba between '" + arrive[i][0] + "' and '" + arrive[i][1] + "'";
-// 		}
-// 		else {
-// 			sql += " or Jam_Tiba between '" + arrive[i][0] + "' and '" + arrive[i][1] + "'";
-// 		}
-
-// 	}
-// 	sql += ")";
-
-// }
-
-// if (duration.length > 0) {
-// 	sql += " and (TIMESTAMPDIFF(MINUTE, Jam_Berangkat, Jam_Tiba) between " + duration[0] * 60 + " and " + duration[1] * 60 + ")";
-
-// }
-
-// if (pricePerPerson.length > 0) {
-// 	sql += " and (Harga_Per_Orang between " + pricePerPerson[0] + " and " + pricePerPerson[1] + ")";
-	
-// }
-
     $.ajax({
       type: "GET",
       url: "/findticket/filterJadwal",
@@ -262,6 +241,39 @@ $(document).ready(function() {
 
   tampilkan(dataPenerbangan);
   cekHargaTermurahDanTermahal(dataPenerbangan);
+
+  $("#filterAirline").hide();
+  $("#filterTime").hide();
+  $("#filterDurationContainer").hide();
+  $("#filterPricePerPersonContainer").hide();
+
+  $("#btnFilterAirline").click(function() {
+    $("#filterAirline").show();
+    $("#filterTime").hide();
+    $("#filterDurationContainer").hide();
+    $("#filterPricePerPersonContainer").hide();
+  });
+
+  $("#btnFilterTime").click(function() {
+    $("#filterAirline").hide();
+    $("#filterTime").show();
+    $("#filterDurationContainer").hide();
+    $("#filterPricePerPersonContainer").hide();
+  });
+
+  $("#btnFilterDuration").click(function() {
+    $("#filterAirline").hide();
+    $("#filterTime").hide();
+    $("#filterDurationContainer").show();
+    $("#filterPricePerPersonContainer").hide();
+  });
+
+  $("#btnFilterPricePerPerson").click(function() {
+    $("#filterAirline").hide();
+    $("#filterTime").hide();
+    $("#filterDurationContainer").hide();
+    $("#filterPricePerPersonContainer").show();
+  });
 
   $( "#filterDuration" ).slider({
     range: true,

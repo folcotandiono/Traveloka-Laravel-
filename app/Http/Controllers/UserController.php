@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Pemesanan;
+use App\Penumpang;
 
 class UserController extends Controller
 {
@@ -13,16 +15,21 @@ class UserController extends Controller
         return View('index', ['negara' => $negara]);
     }
 
-    public function showFindTicket($from, $to, $dateFlight, $banyakOrang) {
+    public function showFindTicket(Request $request) {
+        $from = $request->input('from');
+        $to = $request->input('to');
+        $dateFlight = $request->input('dateFlight');
+        $banyakOrang = $request->input('banyakOrang');
+
         $dataPenerbangan = DB::table('jadwal')
                             ->where('Kota_Asal', $from)
                             ->where('Kota_Tujuan', $to)
                             ->where('Tanggal', $dateFlight)
                             ->get();
 
-        return View('findticket', ['from' => $from, 
-                                    'to' => $to, 
-                                    'dateFlight' => $dateFlight, 
+        return View('findticket', ['from' => $from,
+                                    'to' => $to,
+                                    'dateFlight' => $dateFlight,
                                     'banyakOrang' => $banyakOrang,
                                     'dataPenerbangan' => $dataPenerbangan]);
     }
@@ -41,7 +48,7 @@ class UserController extends Controller
         $airline = join("','", $airline);
 
         $sql = "SELECT * FROM Jadwal WHERE Kota_Asal='$awal' and Kota_Tujuan='$tujuan' and Tanggal='$tanggalPenerbangan'";
-        
+
         if ($airline != "") {
             $sql .= " and Nama_Maskapai in ('$airline')";
 
@@ -81,7 +88,7 @@ class UserController extends Controller
 
         if (!empty($pricePerPerson)) {
             $sql .= " and (Harga_Per_Orang between " . $pricePerPerson[0] . " and " . $pricePerPerson[1] . ")";
-            
+
         }
         // dd($sql);
         $dataPenerbangan = DB::select($sql);
@@ -90,13 +97,65 @@ class UserController extends Controller
         return $dataPenerbangan;
     }
 
-    public function prebooking($noPenerbangan, $banyakPenumpang) {
+    public function prebooking(Request $request) {
+        $noPenerbangan = $request->input('noPenerbangan');
+        $banyakPenumpang = $request->input('banyakPenumpang');
+
         $dataPenerbangan = DB::table('jadwal')->where('No_Penerbangan', $noPenerbangan)->get();
 
         // dd($dataPenerbangan);
 
-        return View('prebooking', ['noPenerbangan' => $noPenerbangan,
-                                    'banyakPenumpang' => $banyakPenumpang,
+        return View('prebooking', ['banyakPenumpang' => $banyakPenumpang,
                                     'dataPenerbangan' => $dataPenerbangan]);
+    }
+
+    public function booking(Request $request) {
+        $noPenerbangan = $request->input('noPenerbangan');
+        $banyakPenumpang = $request->input('banyakPenumpang');
+
+        $dataPenerbangan = DB::table('jadwal')->where('No_Penerbangan', $noPenerbangan)->get();
+
+        // dd($dataPenerbangan);
+
+        return View('booking', ['banyakPenumpang' => $banyakPenumpang,
+                                    'dataPenerbangan' => $dataPenerbangan]);
+    }
+
+    public function payment(Request $request) {
+        $noPenerbangan = $request->input('noPenerbangan');
+        $banyakPenumpang = $request->input('banyakPenumpang');
+
+        $dataPenerbangan = DB::table('jadwal')->where('No_Penerbangan', $noPenerbangan)->get();
+
+        $contactDetailsFullName = $request->input('contactDetailsFullName');
+        $contactDetailsMobileNumber = $request->input('contactDetailsMobileNumber');
+        $contactDetailsEmail = $request->input('contactDetailsEmail');
+        $travelerDetailsTitle = $request->input('travelerDetailsTitle');
+        $travelerDetailsFullName = $request->input('travelerDetailsFullName');
+
+        $pemesanan = new Pemesanan();
+        $pemesanan->Nama_Pemesan = $contactDetailsFullName;
+        $pemesanan->No_Handphone_Pemesan = $contactDetailsMobileNumber;
+        $pemesanan->Email_Pemesan = $contactDetailsEmail;
+        $pemesanan->Status_Pembayaran = 0;
+        $pemesanan->No_Penerbangan = $noPenerbangan;
+        $pemesanan->save();
+
+        dd($pemesanan);
+
+        for($i = 0; $i < $banyakPenumpang; $i++) {
+          $penumpang = new Penumpang();
+          $penumpang->No_Pemesanan = $pemesanan->No_Pemesanan;
+          $penumpang->Title_Penumpang = $travelerDetailsTitle[$i];
+          $penumpang->Nama_Penumpang = $travelerDetailsFullName[$i];
+          $penumpang->save();
+        }
+
+        return View('payment', ['contactDetailsFullName' => $contactDetailsFullName,
+                                'contactDetailsMobileNumber' => $contactDetailsMobileNumber,
+                                'contactDetailsEmail' => $contactDetailsEmail,
+                                'travelerDetailsTitle' => $travelerDetailsTitle,
+                                'travelerDetailsFullName' => $travelerDetailsFullName
+        ]);
     }
 }

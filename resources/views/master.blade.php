@@ -10,6 +10,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
   <link rel="stylesheet" type="text/css" href="{{asset('css/tagsinput.css')}}">
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" type="text/css" href="{{asset('css/intlTelInput.css')}}">
 
   <title>Hello, world!</title>
 </head>
