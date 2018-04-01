@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Pemesanan;
-use App\Penumpang;
+use App\PemesananDetail;
 
 class UserController extends Controller
 {
@@ -141,21 +141,19 @@ class UserController extends Controller
         $pemesanan->No_Penerbangan = $noPenerbangan;
         $pemesanan->save();
 
-        dd($pemesanan);
-
         for($i = 0; $i < $banyakPenumpang; $i++) {
-          $penumpang = new Penumpang();
-          $penumpang->No_Pemesanan = $pemesanan->No_Pemesanan;
-          $penumpang->Title_Penumpang = $travelerDetailsTitle[$i];
-          $penumpang->Nama_Penumpang = $travelerDetailsFullName[$i];
-          $penumpang->save();
+          $pemesananDetail = new PemesananDetail();
+          $pemesananDetail->No_Pemesanan = $pemesanan->id;
+          $pemesananDetail->Title_Penumpang = $travelerDetailsTitle[$i];
+          $pemesananDetail->Nama_Penumpang = $travelerDetailsFullName[$i];
+          $pemesananDetail->save();
         }
 
-        return View('payment', ['contactDetailsFullName' => $contactDetailsFullName,
-                                'contactDetailsMobileNumber' => $contactDetailsMobileNumber,
-                                'contactDetailsEmail' => $contactDetailsEmail,
-                                'travelerDetailsTitle' => $travelerDetailsTitle,
-                                'travelerDetailsFullName' => $travelerDetailsFullName
+        return View('payment', ['noPemesanan' => $pemesanan->id,
+                                'dataPenerbangan' => $dataPenerbangan,
+                                'banyakPenumpang' => $request->input('banyakPenumpang'),
+                                'travelerDetailsTitle' => $request->input('travelerDetailsTitle'),
+                                'travelerDetailsFullName' => $request->input('travelerDetailsFullName')
         ]);
     }
 }
