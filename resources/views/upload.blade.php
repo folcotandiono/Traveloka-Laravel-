@@ -1,11 +1,33 @@
 @extends('master')
 
 @section('content')
-<div class="container">
-  <div class="row">
-    
+<form class="" action="/finish" method="post" enctype="multipart/form-data">
+  
+  <input type="text" name="noPemesanan" style="display:none" value="{{ $noPemesanan }}">
+  <div class="container">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">
+            Upload payment
+          </h4>
+        </div>
+        <div class="card-body">
+          <div class="row align-items-center">
+            <p>{{ $rekening[0] -> Nama_Bank}}</p>
+            <img src="{{asset($rekening[0] -> Directory_Gambar)}}" alt="" height="50" width="100">
+          </div>
+          <div class="row align-items-center">
+            <p>No. Rekening</p>
+            <p>{{ $rekening[0] -> No_Rekening }}</p>
+          </div>
+          <input type="file" class="form-control-file" name="gambar" id="gambar" required>
+          <input type="submit" class="btn btn-primary" value="Upload">
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+</form>
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>

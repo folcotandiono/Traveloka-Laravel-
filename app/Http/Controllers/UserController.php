@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Pemesanan;
 use App\PemesananDetail;
+use App\Pembayaran;
 
 class UserController extends Controller
 {
@@ -124,6 +125,7 @@ class UserController extends Controller
     public function payment(Request $request) {
         $noPenerbangan = $request->input('noPenerbangan');
         $banyakPenumpang = $request->input('banyakPenumpang');
+        $hargaTotal = $request->input('hargaTotal');
 
         $dataPenerbangan = DB::table('jadwal')->where('No_Penerbangan', $noPenerbangan)->get();
 
@@ -137,8 +139,9 @@ class UserController extends Controller
         $pemesanan->Nama_Pemesan = $contactDetailsFullName;
         $pemesanan->No_Handphone_Pemesan = $contactDetailsMobileNumber;
         $pemesanan->Email_Pemesan = $contactDetailsEmail;
-        $pemesanan->Status_Pembayaran = 0;
         $pemesanan->No_Penerbangan = $noPenerbangan;
+        $pemesanan->Harga_Total = $hargaTotal;
+        $pemesanan->Deadline_Pembayaran = date("Y-m-d H:i:s", strtotime("+50 minutes"));
         $pemesanan->save();
 
         for($i = 0; $i < $banyakPenumpang; $i++) {
@@ -149,11 +152,40 @@ class UserController extends Controller
           $pemesananDetail->save();
         }
 
+        $rekening = DB::table('rekening')->get();
+
         return View('payment', ['noPemesanan' => $pemesanan->id,
+                                'waktuSekarang' => date("Y-m-d H:i:s"),
+                                'deadlinePembayaran' => $pemesanan->Deadline_Pembayaran,
                                 'dataPenerbangan' => $dataPenerbangan,
                                 'banyakPenumpang' => $request->input('banyakPenumpang'),
                                 'travelerDetailsTitle' => $request->input('travelerDetailsTitle'),
-                                'travelerDetailsFullName' => $request->input('travelerDetailsFullName')
+                                'travelerDetailsFullName' => $request->input('travelerDetailsFullName'),
+                                'rekening' => $rekening
         ]);
+    }
+
+    public function upload(Request $request) {
+        $noPemesanan = $request->input('noPemesanan');
+        $idRekening = $request->input('bank');
+
+        $rekening = DB::table('rekening')->where('id', $idRekening)->get();
+
+        return View('upload', ['noPemesanan' => $noPemesanan,
+                                'rekening' => $rekening]);
+    }
+
+    public function finish(Request $request) {
+      $noPemesanan = $request->input('noPemesanan');
+      $path = $request->file('gambar')->store('public');
+
+      $path = basename($path);
+      $path = "storage/" . $path;
+
+      $pembayaran = new Pembayaran();
+      $pembayaran->Bukti_Pembayaran = $path;
+      $pembayaran->Status_Pembayaran = 0;
+      $pembayaran->No_Pemesanan = $noPemesanan;
+      $pembayaran->save();
     }
 }

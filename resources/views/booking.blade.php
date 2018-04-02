@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-md-8">
                 <form action="/payment" method="post" onsubmit="return validation()">
-                  @csrf
+                  
                 <input type="text" style="display:none" name="noPenerbangan" value="{{ $dataPenerbangan[0] -> No_Penerbangan }}">
                 <input type="text" style="display:none" name="banyakPenumpang" value="{{ $banyakPenumpang }}">
                     <h3>Contact Details</h3>
@@ -63,11 +63,12 @@
                     <div class="card">
                       <div class="card-header">
                         <h4 class="card-title">
-                          
+                          <div class="row justify-content-between">
+                            <p>Price you pay</p>
+                            <p>{{ $banyakPenumpang * $dataPenerbangan[0] -> Harga_Per_Orang }}</p>
+                          </div>
                         </h4>
-                      </div>
-                      <div class="card-body">
-
+                        <input type="text" style="display:none" name="hargaTotal" value="{{ $banyakPenumpang * $dataPenerbangan[0] -> Harga_Per_Orang }}">
                       </div>
                     </div>
                     <input type="submit" class="btn btn-warning btn-lg btn-block" id="payment" value="Continue">
