@@ -2,6 +2,7 @@
 
 @section('content')
 <form action="/booking" method="get">
+  @csrf
     <input type="text" name="noPenerbangan" value="{{ $dataPenerbangan[0] -> No_Penerbangan }}" style="display: none">
     <input type="text" name="banyakPenumpang" value="{{ $banyakPenumpang }}" style="display: none">
     <div class="container">
@@ -31,7 +32,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="card-title">
-                                    {{ $dataPenerbangan[0] -> Kota_Asal }} 
+                                    {{ $dataPenerbangan[0] -> Kota_Asal }}
                                     <img src="{{asset('gambar/ke.png')}}" alt="" height="50" width="50">
                                     {{ $dataPenerbangan[0] -> Kota_Tujuan }}
                                 </h4>
@@ -47,7 +48,7 @@
                                     <p style="margin-left:8px"> {{ $dataPenerbangan[0] -> No_Penerbangan }}</p>
                                 </div>
                                 <div class="row">
-                                    
+
                                     <div class="col-md-2">
                                         <p id="jamBerangkat"></p>
                                         <p>{{ $dataPenerbangan[0] -> Kota_Asal }}</p>

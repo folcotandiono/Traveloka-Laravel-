@@ -16,6 +16,7 @@
       <div class="card">
         <div id="transfer">
           <form action="/upload" method="get" onsubmit="return masihSempat()">
+            @csrf
             <input type="text" name="noPemesanan" style="display:none" value="{{ $noPemesanan }}">
             <div class="card-header">
               <h4 class="card-title">
@@ -135,6 +136,7 @@
   });
   function masihSempat() {
     if (seconds_left > 0) return true;
+    toastr.warning('Deadline pembayaran sudah lewat..!!!');
     return false;
   }
 </script>

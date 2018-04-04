@@ -16,6 +16,7 @@ Route::get('/findticket', 'UserController@showFindTicket');
 Route::get('/findticket/filterJadwal', 'UserController@filterJadwal');
 Route::get('/prebooking', 'UserController@prebooking');
 Route::get('/booking', 'UserController@booking');
-Route::post('/payment', 'UserController@payment');
+Route::post('/booking/simpan', 'UserController@bookingSimpan');
+Route::get('/payment', 'UserController@payment');
 Route::get('/upload', 'UserController@upload');
 Route::post('/finish', 'UserController@finish');

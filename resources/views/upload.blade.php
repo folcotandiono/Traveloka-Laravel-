@@ -2,7 +2,7 @@
 
 @section('content')
 <form class="" action="/finish" method="post" enctype="multipart/form-data">
-  
+  @csrf
   <input type="text" name="noPemesanan" style="display:none" value="{{ $noPemesanan }}">
   <div class="container">
     <div class="col-md-12">
@@ -13,6 +13,7 @@
           </h4>
         </div>
         <div class="card-body">
+          <h4 id="countdown">00:00:00</h4>
           <div class="row align-items-center">
             <p>{{ $rekening[0] -> Nama_Bank}}</p>
             <img src="{{asset($rekening[0] -> Directory_Gambar)}}" alt="" height="50" width="100">
@@ -41,6 +42,27 @@
 <script src="{{asset('js/intlTelInput.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
+  var seconds_left;
+  $(document).ready(function() {
+    var deadlinePembayaran = new Date('{{ $deadlinePembayaran }}');
+    var now = new Date('{{ $waktuSekarang }}');
+    seconds_left = deadlinePembayaran.getTime() - now.getTime();
+    seconds_left /= 1000;
+    console.log(seconds_left);
+    var interval = setInterval(function() {
+        document.getElementById('countdown').innerHTML = formatDetikKeJam(seconds_left);
 
+        if (seconds_left <= 0)
+        {
+            clearInterval(interval);
+        }
+        --seconds_left;
+    }, 1000);
+  });
+  function masihSempat() {
+    if (seconds_left > 0) return true;
+    toastr.warning('Deadline pembayaran sudah lewat..!!!');
+    return false;
+  }
 </script>
 @endsection

@@ -2,6 +2,7 @@
 
 @section('content')
   <form action="/findticket" method="get" onsubmit="return validate()">
+    @csrf
     <div class="container">
       <div class="col-md-12" style="border-style: solid; border-width: 1px;">
         <div class="row">

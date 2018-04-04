@@ -4,8 +4,8 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8">
-                <form action="/payment" method="post" onsubmit="return validation()">
-                  
+                <form action="/booking/simpan" method="post" onsubmit="return validation()">
+                  @csrf
                 <input type="text" style="display:none" name="noPenerbangan" value="{{ $dataPenerbangan[0] -> No_Penerbangan }}">
                 <input type="text" style="display:none" name="banyakPenumpang" value="{{ $banyakPenumpang }}">
                     <h3>Contact Details</h3>

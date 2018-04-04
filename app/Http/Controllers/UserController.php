@@ -122,37 +122,51 @@ class UserController extends Controller
                                     'dataPenerbangan' => $dataPenerbangan]);
     }
 
+    public function bookingSimpan(Request $request) {
+      $noPenerbangan = $request->input('noPenerbangan');
+      $banyakPenumpang = $request->input('banyakPenumpang');
+      $hargaTotal = $request->input('hargaTotal');
+
+      $dataPenerbangan = DB::table('jadwal')->where('No_Penerbangan', $noPenerbangan)->get();
+
+      $contactDetailsFullName = $request->input('contactDetailsFullName');
+      $contactDetailsMobileNumber = $request->input('contactDetailsMobileNumber');
+      $contactDetailsEmail = $request->input('contactDetailsEmail');
+      $travelerDetailsTitle = $request->input('travelerDetailsTitle');
+      $travelerDetailsFullName = $request->input('travelerDetailsFullName');
+
+      $pemesanan = new Pemesanan();
+      $pemesanan->Nama_Pemesan = $contactDetailsFullName;
+      $pemesanan->No_Handphone_Pemesan = $contactDetailsMobileNumber;
+      $pemesanan->Email_Pemesan = $contactDetailsEmail;
+      $pemesanan->No_Penerbangan = $noPenerbangan;
+      $pemesanan->Harga_Total = $hargaTotal;
+      $pemesanan->Deadline_Pembayaran = date("Y-m-d H:i:s", strtotime("+50 minutes"));
+      $pemesanan->save();
+
+      for($i = 0; $i < $banyakPenumpang; $i++) {
+        $pemesananDetail = new PemesananDetail();
+        $pemesananDetail->No_Pemesanan = $pemesanan->id;
+        $pemesananDetail->Title_Penumpang = $travelerDetailsTitle[$i];
+        $pemesananDetail->Nama_Penumpang = $travelerDetailsFullName[$i];
+        $pemesananDetail->save();
+      }
+
+      $rekening = DB::table('rekening')->get();
+
+      return redirect('/payment')->with( ['noPemesanan' => $pemesanan->id,
+                              'waktuSekarang' => date("Y-m-d H:i:s"),
+                              'deadlinePembayaran' => $pemesanan->Deadline_Pembayaran,
+                              'dataPenerbangan' => $dataPenerbangan,
+                              'banyakPenumpang' => $request->input('banyakPenumpang'),
+                              'travelerDetailsTitle' => $request->input('travelerDetailsTitle'),
+                              'travelerDetailsFullName' => $request->input('travelerDetailsFullName'),
+                              'rekening' => $rekening
+      ]);
+    }
+
     public function payment(Request $request) {
-        $noPenerbangan = $request->input('noPenerbangan');
-        $banyakPenumpang = $request->input('banyakPenumpang');
-        $hargaTotal = $request->input('hargaTotal');
-
-        $dataPenerbangan = DB::table('jadwal')->where('No_Penerbangan', $noPenerbangan)->get();
-
-        $contactDetailsFullName = $request->input('contactDetailsFullName');
-        $contactDetailsMobileNumber = $request->input('contactDetailsMobileNumber');
-        $contactDetailsEmail = $request->input('contactDetailsEmail');
-        $travelerDetailsTitle = $request->input('travelerDetailsTitle');
-        $travelerDetailsFullName = $request->input('travelerDetailsFullName');
-
-        $pemesanan = new Pemesanan();
-        $pemesanan->Nama_Pemesan = $contactDetailsFullName;
-        $pemesanan->No_Handphone_Pemesan = $contactDetailsMobileNumber;
-        $pemesanan->Email_Pemesan = $contactDetailsEmail;
-        $pemesanan->No_Penerbangan = $noPenerbangan;
-        $pemesanan->Harga_Total = $hargaTotal;
-        $pemesanan->Deadline_Pembayaran = date("Y-m-d H:i:s", strtotime("+50 minutes"));
-        $pemesanan->save();
-
-        for($i = 0; $i < $banyakPenumpang; $i++) {
-          $pemesananDetail = new PemesananDetail();
-          $pemesananDetail->No_Pemesanan = $pemesanan->id;
-          $pemesananDetail->Title_Penumpang = $travelerDetailsTitle[$i];
-          $pemesananDetail->Nama_Penumpang = $travelerDetailsFullName[$i];
-          $pemesananDetail->save();
-        }
-
-        $rekening = DB::table('rekening')->get();
+        dd(session()->get('noPemesanan'));
 
         return View('payment', ['noPemesanan' => $pemesanan->id,
                                 'waktuSekarang' => date("Y-m-d H:i:s"),
@@ -170,8 +184,13 @@ class UserController extends Controller
         $idRekening = $request->input('bank');
 
         $rekening = DB::table('rekening')->where('id', $idRekening)->get();
+        $pemesanan = DB::table('pemesanan')->where('No_Pemesanan', $noPemesanan)->get();
+
+        // dd($pemesanan);
 
         return View('upload', ['noPemesanan' => $noPemesanan,
+                                'waktuSekarang' => date("Y-m-d H:i:s"),
+                                'deadlinePembayaran' => $pemesanan[0]->Deadline_Pembayaran,
                                 'rekening' => $rekening]);
     }
 
@@ -187,5 +206,7 @@ class UserController extends Controller
       $pembayaran->Status_Pembayaran = 0;
       $pembayaran->No_Pemesanan = $noPemesanan;
       $pembayaran->save();
+
+      return redirect('/');
     }
 }
